@@ -1,7 +1,8 @@
 <?php
-$memory = array_fill(0,30000,0);
+$memory = array_fill(0, 30000, 0);
 $pointer = 0;
 
+// lire le fichier en param
 $programName = $argv[1];
 $program = file_get_contents($programName);
 
@@ -9,7 +10,7 @@ var_dump($program);
 
 $instruction_cursor = 0;
 
-while($instruction_cursor < strlen($program)){
+while ($instruction_cursor < strlen($program)) {
 
     match ($program[$instruction_cursor]) {
         ">" => $pointer++,
@@ -20,21 +21,41 @@ while($instruction_cursor < strlen($program)){
         "," => $memory[$pointer] = fgetc(STDIN),
         "[" => openBracket($memory, $pointer, $program, $instruction_cursor),
         "]" => closeBracket($memory, $pointer, $program, $instruction_cursor),
-
     };
+
     $instruction_cursor++;
 }
 
-function openBracket(array $memory, int $pointer, string $program, int &$instruction_cursor): void {
-    if($memory[$pointer]===0){
-        
-    }else{
-
+function openBracket(array $memory, int $pointer, string $program, int &$instruction_cursor): void
+{
+    // On sort de la boucle
+    if ($memory[$pointer] === 0) {
+        $counter = 1; // Initier à 1 car nous sommes déjà sur un '['
+        while ($counter > 0) {
+            $instruction_cursor++;
+            if ($program[$instruction_cursor] === "]") {
+                $counter--;
+            }
+            if ($program[$instruction_cursor] === "[") {
+                $counter++;
+            }
+        }
     }
 }
-function closeBracket(array $memory, int $pointer, string $program, int &$instruction_cursor): void {
 
+function closeBracket(array $memory, int $pointer, string $program, int &$instruction_cursor): void
+{
+    if ($memory[$pointer] !== 0) {
+        $counter = 1; // Initier à 1 car nous sommes déjà sur un ']'
+        while ($counter > 0) {
+            $instruction_cursor--;
+            if ($program[$instruction_cursor] === "]") {
+                $counter++;
+            }
+            if ($program[$instruction_cursor] === "[") {
+                $counter--;
+            }
+        }
+    }
 }
-
-
 ?>
